@@ -7,6 +7,12 @@ export const signup = async (req, res) => {
     const { userName, fullName, email, password } = req.body;
     const emailRegex = /^[\w-.]+@[a-zA-Z\d-]+(\.[a-zA-Z]{2,})+$/;
 
+    if (!userName || !fullName || !email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
     if (!emailRegex.test(email)) {
       return res
         .status(400)
@@ -119,7 +125,7 @@ export const logout = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
     console.error("Error in getMe controller", error.message);
     res.status(500).json({ success: false, message: "Something went wrong" });
