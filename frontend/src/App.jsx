@@ -22,7 +22,6 @@ function App() {
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch me");
         }
-        console.log("my data:", data);
         return data;
       } catch (error) {
         throw new Error(error);
