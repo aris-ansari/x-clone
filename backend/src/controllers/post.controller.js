@@ -116,13 +116,16 @@ export const commentOnPost = async (req, res) => {
         .json({ success: false, message: "Post not found" });
     }
 
+    const user = await User.findById(userId).select("fullName userName profileImg");
+
     const comment = { user: userId, text };
 
     post.comments.push(comment);
-
     await post.save();
 
-    res.status(200).json({ success: true, data: post });
+    await post.populate("comments.user", "fullName userName profileImg");
+
+    res.status(200).json(post);
   } catch (error) {
     console.error("Error in commentOnPost controller", error.message);
     res.status(500).json({ success: false, message: "Something went wrong" });

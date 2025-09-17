@@ -21,8 +21,6 @@ const Post = ({ post }) => {
 
   const isLiked = post.likes.includes(authUser._id);
 
-  const isCommenting = false;
-
   const formattedDate = "1h";
 
   const { mutate: deletePost, isPending: isDeleting } = useMutation({
@@ -84,12 +82,52 @@ const Post = ({ post }) => {
     },
   });
 
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to comment");
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: (updatedComments) => {
+      setComment("");
+      queryClient.setQueryData(["posts"], (oldData) => {
+        return oldData.map((c) => {
+          if (c._id === post._id) {
+            return { ...c, comments: updatedComments.comments };
+          }
+          return c;
+        });
+      });
+    },
+    onError: (error) => {
+      throw new Error(error.message);
+    },
+  });
+
   const handleDeletePost = () => {
     deletePost();
   };
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
   const handleLikePost = () => {
@@ -231,7 +269,7 @@ const Post = ({ post }) => {
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
                 )}
                 {isLiked && !isLiking && (
-                  <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500 " />
+                  <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500" />
                 )}
 
                 <span
