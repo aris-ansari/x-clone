@@ -67,9 +67,11 @@ export const likeUnlinePost = async (req, res) => {
     if (isLiked) {
       await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
       await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
+
+      const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
       res
         .status(200)
-        .json({ success: true, message: "Post unliked successfully" });
+        .json(updatedLikes);
     } else {
       post.likes.push(userId);
       await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
@@ -82,9 +84,11 @@ export const likeUnlinePost = async (req, res) => {
       });
 
       await notification.save();
+
+      const updatedLikes = post.likes;
       res
         .status(200)
-        .json({ success: true, message: "Post liked successfully" });
+        .json(updatedLikes);
     }
   } catch (error) {
     console.error("Error in likeUnlinePost controller", error.message);
