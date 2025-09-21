@@ -14,7 +14,7 @@ export const getUserProfile = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json(user);
   } catch (error) {
     console.error("Error in getUserProfile controller", error.message);
     res.status(500).json({ success: false, message: "Something went wrong" });
