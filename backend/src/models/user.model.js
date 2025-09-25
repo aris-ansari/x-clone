@@ -62,6 +62,9 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Added a single-field index for fast prefix searches
+userSchema.index({ userName: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 export default User;

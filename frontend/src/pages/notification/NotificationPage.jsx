@@ -88,7 +88,7 @@ const NotificationPage = () => {
                 <FaHeart className="w-7 h-7 text-red-500" />
               )}
               <Link to={`/profile/${notification.from.userName}`}>
-                <div className="avatar">
+                <div className="avatar w-8 h-8">
                   <div className="w-8 rounded-full">
                     <img
                       src={

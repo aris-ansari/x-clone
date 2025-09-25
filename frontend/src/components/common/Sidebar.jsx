@@ -79,7 +79,7 @@ const Sidebar = () => {
             to={`/profile/${authUser.userName}`}
             className="mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full"
           >
-            <div className="avatar hidden md:inline-flex">
+            <div className="avatar hidden md:inline-flex w-8 h-8">
               <div className="w-8 rounded-full">
                 <img src={authUser?.profileImg || "/avatar-placeholder.png"} />
               </div>
