@@ -44,8 +44,6 @@ const Posts = ({ feedType, userName, userId }) => {
     },
   });
 
-  // console.log(posts?.length)
-
   useEffect(() => {
     refetch();
   }, [feedType, refetch, userName]);

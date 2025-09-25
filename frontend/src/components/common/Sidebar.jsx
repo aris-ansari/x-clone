@@ -19,7 +19,7 @@ const Sidebar = () => {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to logout");
-        console.log(data);
+
         return data;
       } catch (error) {
         console.error(error);
@@ -27,7 +27,8 @@ const Sidebar = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      queryClient.setQueryData(["authUser"], null); // immediately clears cached auth
+      queryClient.invalidateQueries({ queryKey: ["authUser"] }); // optional: refetch backend
       toast.success("Logged out successfully");
     },
     onError: () => {

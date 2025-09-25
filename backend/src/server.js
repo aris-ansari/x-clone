@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
+import http from "http";
+import { initSocket } from "./socket.js";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -32,7 +34,15 @@ app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/search", searchRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-  connectDB();
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize socket.io
+initSocket(server);
+
+// Connect DB then start server
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`);
+  });
 });

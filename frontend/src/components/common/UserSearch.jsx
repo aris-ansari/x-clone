@@ -5,7 +5,6 @@ import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import { CiSearch } from "react-icons/ci";
 
 async function fetchUsers(query) {
-  console.log("fetchUsers called with:", query);
   const res = await fetch(`/api/search/users?q=${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error("Failed to fetch users");
   return res.json();

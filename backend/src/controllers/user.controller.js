@@ -3,6 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import { notifyUser } from "../lib/utils/notifyUser.js";
 
 export const getUserProfile = async (req, res) => {
   const { userName } = req.params;
@@ -60,17 +61,16 @@ export const followUnfollowUser = async (req, res) => {
       await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
       await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
 
-      const newNotification = new Notification({
+      // Notify followed user
+      await notifyUser({
         from: req.user._id,
         to: userToModify._id,
         type: "follow",
+        meta: { message: "started following you", fullName: userToModify.fullName },
       });
 
-      await newNotification.save();
-
-      const toFollow = `You have started following ${userToModify.fullName}`;
-
-      res.status(200).json({ success: true, message: toFollow });
+      const message = `You have started following ${userToModify.fullName}`;
+      res.status(200).json({ success: true, message, });
     }
   } catch (error) {
     console.error("Error in followUnfollowUser controller", error.message);

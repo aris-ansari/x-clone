@@ -9,34 +9,11 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import useSocket from "./hooks/useSocket";
+import { NotificationProvider } from "./components/context/NotificationContext";
 
-function App() {
-  const { data: authUser, isLoading } = useQuery({
-    // I have used queryKey to give a unique name to our query and refer to it later
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/auth/me");
-        const data = await res.json();
-        if (data.message) return null;
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to fetch me");
-        }
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
-    retry: false,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+function AppContent({ authUser }) {
+  useSocket(); // now safe, inside NotificationProvider
 
   return (
     <div className="flex max-w-6xl mx-auto">
@@ -64,8 +41,35 @@ function App() {
         />
       </Routes>
       {authUser && <RightPanel />}
-      <Toaster />
     </div>
+  );
+}
+
+function App() {
+  const { data: authUser, isLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      const res = await fetch("/api/auth/me", { credentials: "include" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch me");
+      return data;
+    },
+    retry: false,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <NotificationProvider>
+      <AppContent authUser={authUser} />
+      <Toaster />
+    </NotificationProvider>
   );
 }
 

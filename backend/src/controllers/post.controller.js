@@ -3,6 +3,7 @@ import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import { v2 as cloudinary } from "cloudinary";
+import { notifyUser } from "../lib/utils/notifyUser.js";
 
 export const createPost = async (req, res) => {
   try {
@@ -43,10 +44,11 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const likeUnlinePost = async (req, res) => {
+export const likeUnlikePost = async (req, res) => {
   try {
     const postId = req.params.id;
     const userId = req.user._id;
+    const user = await User.findById(userId).select("fullName");
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res
@@ -77,21 +79,21 @@ export const likeUnlinePost = async (req, res) => {
       await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
       await post.save();
 
-      const notification = new Notification({
-        from: userId,
-        to: post.user,
-        type: "like",
-      });
+      // Notify post owner (if not liking own post)
+      if (String(post.user) !== String(userId)) {
+        await notifyUser({
+          from: userId,
+          to: post.user,
+          type: "like",
+          post: post._id,
+          meta: { message: "liked your post", fullName: user.fullName },
+        });
+      }
 
-      await notification.save();
-
-      const updatedLikes = post.likes;
-      res
-        .status(200)
-        .json(updatedLikes);
+      res.status(200).json(post.likes);
     }
   } catch (error) {
-    console.error("Error in likeUnlinePost controller", error.message);
+    console.error("Error in likeUnlikePost controller", error.message);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 };
@@ -124,6 +126,19 @@ export const commentOnPost = async (req, res) => {
     await post.save();
 
     await post.populate("comments.user", "fullName userName profileImg");
+
+    if (String(post.user) !== String(userId)) {
+      const lastComment = post.comments[post.comments.length - 1];
+
+      await notifyUser({
+        from: userId,
+        to: post.user,
+        type: "comment",
+        post: post._id,
+        comment: lastComment._id,
+        meta: { message: "commented on your post", fullName: user.fullName },
+      });
+    }
 
     res.status(200).json(post);
   } catch (error) {
