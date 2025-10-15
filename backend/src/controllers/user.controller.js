@@ -66,7 +66,7 @@ export const followUnfollowUser = async (req, res) => {
         from: req.user._id,
         to: userToModify._id,
         type: "follow",
-        meta: { message: "started following you", fullName: userToModify.fullName },
+        meta: { message: "started following you", fullName: req.user.fullName },
       });
 
       const message = `You have started following ${userToModify.fullName}`;

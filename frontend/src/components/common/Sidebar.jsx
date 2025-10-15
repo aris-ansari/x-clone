@@ -5,8 +5,11 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { useNotifications } from "../context/NotificationContext";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = () => {
   const queryClient = useQueryClient();
@@ -39,6 +42,19 @@ const Sidebar = () => {
   // Get cached user data from the already-fetched query without triggering a new API call
   const { data: authUser } = queryClient.getQueryData(["authUser"]);
 
+  const { notifications } = useNotifications();
+  const [latestNotification, setLatestNotification] = useState(null);
+
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const newNotif = notifications[0];
+      setLatestNotification(newNotif);
+
+      const timer = setTimeout(() => setLatestNotification(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [notifications]);
+
   return (
     <div className="md:flex-[2_2_0] w-18 max-w-52">
       <div className="sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full">
@@ -55,7 +71,40 @@ const Sidebar = () => {
               <span className="text-lg hidden md:block">Home</span>
             </Link>
           </li>
-          <li className="flex justify-center md:justify-start">
+          <li className="flex justify-center md:justify-start relative">
+            <AnimatePresence>
+              {latestNotification && (
+                <motion.div
+                  key={
+                    latestNotification.meta?.id ||
+                    latestNotification.meta?.message
+                  }
+                  initial={{ opacity: 0, scale: 0.7, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                    duration: 0.4,
+                  }}
+                  className="chat chat-start absolute left-[55px] md:left-[155px] bottom-[10px] min-w-[280px]"
+                >
+                  <motion.div
+                    layout
+                    className="chat-bubble chat-bubble-primary text-white shadow-lg px-4 py-2 text-base font-medium"
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  >
+                    {latestNotification.meta?.fullName}{" "}
+                    {latestNotification.meta?.message ||
+                      latestNotification.type}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <Link
               to="/notifications"
               className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"

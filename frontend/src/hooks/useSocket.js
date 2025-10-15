@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { useNotifications } from "../components/context/NotificationContext";
-import toast from "react-hot-toast";
 
 const useSocket = () => {
   const socketRef = useRef(null);
@@ -18,9 +17,8 @@ const useSocket = () => {
     });
 
     socketRef.current.on("notification", (payload) => {
-      console.log("Realtime notification:", payload);
+      // console.log("Realtime notification:", payload);
       addNotification(payload);
-      toast(`${payload.meta?.fullName} ${payload.meta?.message || payload.type}`);
     });
 
     socketRef.current.on("disconnect", () => {

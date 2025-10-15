@@ -104,7 +104,7 @@ const ProfilePage = () => {
               <div className="relative group/cover">
                 <img
                   src={coverImg || user?.coverImg || "/cover.png"}
-                  className="h-52 w-full object-cover"
+                  className="h-52 w-full object-cover relative z-[-1]"
                   alt="cover image"
                 />
                 {isMyProfile && (
@@ -137,6 +137,7 @@ const ProfilePage = () => {
                         user?.profileImg ||
                         "/avatar-placeholder.png"
                       }
+                      className="relative z-[-1]"
                     />
                     <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
                       {isMyProfile && (
