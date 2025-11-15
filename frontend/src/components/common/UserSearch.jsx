@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import { CiSearch } from "react-icons/ci";
+import { api } from "../../lib/api";
 
 async function fetchUsers(query) {
-  const res = await fetch(`/api/search/users?q=${encodeURIComponent(query)}`);
+  const res = await api(`/api/search/users?q=${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error("Failed to fetch users");
   return res.json();
 }

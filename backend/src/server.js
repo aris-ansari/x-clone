@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
 import http from "http";
-import cors from "cors";                       // <-- ADD THIS
+import cors from "cors";
 import { initSocket } from "./socket.js";
 
 import authRoutes from "./routes/auth.route.js";
@@ -16,7 +16,6 @@ import connectDB from "./db/connectDB.js";
 
 dotenv.config();
 
-// CORS MUST BE AT TOP BEFORE ROUTES
 const allowedOrigins = [
   "http://localhost:3000",
   "https://x-clone-frontend-xqzw.onrender.com",

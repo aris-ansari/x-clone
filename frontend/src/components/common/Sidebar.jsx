@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { useNotifications } from "../context/NotificationContext";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from "../../lib/api";
 
 const Sidebar = () => {
   const queryClient = useQueryClient();
@@ -17,7 +18,7 @@ const Sidebar = () => {
   const { mutate: logoutMutation } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch("/api/auth/logout", {
+        const res = await api("/api/auth/logout", {
           method: "POST",
         });
         const data = await res.json();

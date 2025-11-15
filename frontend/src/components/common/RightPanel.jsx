@@ -4,13 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "./LoadingSpinner";
 import UserSearch from "./UserSearch";
+import { api } from "../../lib/api";
 
 const RightPanel = () => {
   const { data: suggestedUsers, isLoading } = useQuery({
     queryKey: ["suggestedUsers"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/users/suggested");
+        const res = await api("/api/users/suggested");
         const data = await res.json();
 
         if (!res.ok) {

@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import useSocket from "./hooks/useSocket";
 import { NotificationProvider } from "./components/context/NotificationContext";
+import { api } from "./lib/api";
 
 function AppContent({ authUser }) {
   useSocket(); // now safe, inside NotificationProvider
@@ -49,7 +50,7 @@ function App() {
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
-      const res = await fetch("/api/auth/me", { credentials: "include" });
+      const res = await api("/api/auth/me", { credentials: "include" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch me");
       return data;
