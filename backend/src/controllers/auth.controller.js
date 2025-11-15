@@ -119,9 +119,7 @@ export const logout = async (req, res) => {
       secure: true,
       sameSite: "none",
       path: "/",
-      domain: ".onrender.com",
     });
-
 
     return res.status(200).json({
       success: true,

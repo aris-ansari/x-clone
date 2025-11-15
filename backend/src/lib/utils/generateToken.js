@@ -10,8 +10,6 @@ export const generateTokenAndSetCookie = (userId, res) => {
     secure: true,
     sameSite: "none",
     path: "/",
-    domain: ".onrender.com",
-    priority: "high",
     maxAge: 15 * 24 * 60 * 60 * 1000,
   });
 };
