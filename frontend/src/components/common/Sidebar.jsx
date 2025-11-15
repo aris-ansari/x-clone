@@ -20,7 +20,6 @@ const Sidebar = () => {
       try {
         const res = await api("/api/auth/logout", {
           method: "POST",
-          credentials: "include",
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to logout");

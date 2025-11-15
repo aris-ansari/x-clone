@@ -18,16 +18,16 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigin = process.env.NODE_ENV === "production"
+  ? "https://x-clone-frontend-xqzw.onrender.com"
+  : "http://localhost:3000";
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://x-clone-frontend-xqzw.onrender.com",
-    ],
+    origin: allowedOrigin,
     credentials: true,
   })
 );
-
 
 // HANDLE preflight requests
 app.options("*", cors());

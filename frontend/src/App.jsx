@@ -50,7 +50,7 @@ function App() {
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
-      const res = await api("/api/auth/me", { credentials: "include" });
+      const res = await api("/api/auth/me");
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch me");
       return data;
