@@ -4,10 +4,14 @@ import jwt from "jsonwebtoken";
 let io = null;
 export const onlineUsers = new Map();
 
+const allowedOrigin = process.env.NODE_ENV === "production"
+  ? "https://x-clone-frontend-xqzw.onrender.com"
+  : "http://localhost:3000";
+
 export function initSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:3000",
+      origin: allowedOrigin,
       methods: ["GET", "POST"],
       credentials: true, // important for cookie auth
     },
