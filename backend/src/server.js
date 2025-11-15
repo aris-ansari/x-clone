@@ -16,19 +16,18 @@ import connectDB from "./db/connectDB.js";
 
 dotenv.config();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://x-clone-frontend-xqzw.onrender.com",
-];
-
 const app = express();
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: [
+      "http://localhost:3000",
+      "https://x-clone-frontend-xqzw.onrender.com",
+    ],
     credentials: true,
   })
 );
+
 
 // HANDLE preflight requests
 app.options("*", cors());
